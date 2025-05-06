@@ -1,7 +1,13 @@
-/**
- * This file is loaded via the <script> tag in the index.html file and will
- * be executed in the renderer process for that window. No Node.js APIs are
- * available in this process because `nodeIntegration` is turned off and
- * `contextIsolation` is turned on. Use the contextBridge API in `preload.js`
- * to expose Node.js functionality from the main process.
- */
+window.addEventListener('DOMContentLoaded', () => {
+    // Enable Node.js integration
+    const { ipcRenderer } = require('electron');
+    
+    // Log any errors
+    window.onerror = function(msg, url, lineNo, columnNo, error) {
+        console.error('Error: ' + msg + '\nURL: ' + url + '\nLine: ' + lineNo + '\nColumn: ' + columnNo + '\nError object: ' + JSON.stringify(error));
+        return false;
+    };
+
+    // Log when DOM is ready
+    console.log('DOM Content Loaded');
+});
