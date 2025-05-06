@@ -2,15 +2,12 @@ const fs = require('fs');
 const path = require('path');
 
 // Function to read and parse CSV
-function loadCSV() {
-    const csvPath = path.join(__dirname, 'pacadm.csv');
-    
-    fs.readFile(csvPath, 'utf-8', (err, data) => {
-        if (err) {
-            console.error('Error reading CSV file:', err);
-            return;
-        }
-
+async function loadCSV() {
+    try {
+        const csvPath = path.join(__dirname, 'pacadm.csv');
+        
+        const data = await fs.promises.readFile(csvPath, 'utf-8');
+        
         // Split the CSV into rows
         const rows = data.split('\n');
         
@@ -19,6 +16,7 @@ function loadCSV() {
         
         // Create table headers
         const tableHeader = document.getElementById('tableHeader');
+        tableHeader.innerHTML = ''; // Clear existing headers
         headers.forEach(header => {
             const th = document.createElement('th');
             th.textContent = header;
@@ -27,6 +25,7 @@ function loadCSV() {
 
         // Create table rows
         const tableBody = document.getElementById('tableBody');
+        tableBody.innerHTML = ''; // Clear existing rows
         for (let i = 1; i < rows.length; i++) {
             if (rows[i].trim() === '') continue;
             
@@ -41,8 +40,29 @@ function loadCSV() {
             
             tableBody.appendChild(row);
         }
+
+        // Setup search functionality after table is loaded
+        setupSearch();
+
+    } catch (error) {
+        console.error('Error loading CSV:', error);
+        document.body.innerHTML += `<p style="color: red">Error loading CSV: ${error.message}</p>`;
+    }
+}
+
+// Search functionality
+function setupSearch() {
+    const searchInput = document.getElementById('searchInput');
+    searchInput.addEventListener('keyup', function() {
+        const searchText = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#tableBody tr');
+
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchText) ? '' : 'none';
+        });
     });
 }
 
 // Load CSV when the window is ready
-window.addEventListener('DOMContentLoaded', loadCSV);
+document.addEventListener('DOMContentLoaded', loadCSV);
