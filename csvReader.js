@@ -1,11 +1,26 @@
 const fs = require('fs');
 const path = require('path');
+const { app } = require('@electron/remote');
 
 // Function to read and parse CSV
 async function loadCSV() {
     try {
-        const csvPath = path.join(__dirname, 'pacadm.csv');
+        let csvPath;
         
+        // In development
+        if (process.env.NODE_ENV === 'development') {
+            csvPath = path.join(__dirname, 'pacadm.csv');
+        } else {
+            // In production
+            csvPath = path.join(app.getPath('userData'), 'pacadm.csv');
+        }
+
+        // Check if file exists in userData, if not, copy from resources
+        if (!fs.existsSync(csvPath)) {
+            const resourcePath = path.join(process.resourcesPath, 'pacadm.csv');
+            fs.copyFileSync(resourcePath, csvPath);
+        }
+
         const data = await fs.promises.readFile(csvPath, 'utf-8');
         
         // Split the CSV into rows

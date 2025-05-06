@@ -1,5 +1,5 @@
 const { app, BrowserWindow } = require('electron')
-const path = require('path')
+require('@electron/remote/main').initialize()
 
 function createWindow () {
     const mainWindow = new BrowserWindow({
@@ -12,10 +12,8 @@ function createWindow () {
         }
     })
 
+    require('@electron/remote/main').enable(mainWindow.webContents)
     mainWindow.loadFile('index.html')
-    
-    // Open DevTools for debugging
-    mainWindow.webContents.openDevTools()
 }
 
 app.whenReady().then(createWindow)
