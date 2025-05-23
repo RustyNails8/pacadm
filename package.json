@@ -1,6 +1,6 @@
 {
   "name": "pacadm",
-  "version": "2.0.0",
+  "version": "3.1.0",
   "description": "A minimal Electron application",
   "main": "main.js",
   "scripts": {
@@ -8,6 +8,15 @@
     "package": "electron-forge package",
     "make": "electron-forge make",
     "update-csv": "node updateVersion.js && npm run make"
+  },
+  "build": {
+    "extraResources": [
+      {
+        "from": "resources",
+        "to": "resources",
+        "filter": ["*.csv", "*.json"]
+      }
+    ]
   },
   "repository": {
     "type": "git",
@@ -39,14 +48,15 @@
   "homepage": "https://github.com/RustyNails8/pacadm#readme",
   "dependencies": {
     "@electron/remote": "^2.1.2",
-    "electron-squirrel-startup": "^1.0.1"
+    "electron-squirrel-startup": "^1.0.1",
+    "xlsx": "^0.18.5"
   },
   "config": {
     "forge": {
       "packagerConfig": {
         "extraResource": [
-          "pacadm.csv",
-          "version.json"
+          "resources/PACADM.csv",
+          "resources/version.json"
         ]
       },
       "makers": [

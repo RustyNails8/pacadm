@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'">
+    <link href="./styles.css" rel="stylesheet">
+    <link href="https://unpkg.com/tabulator-tables@5.6.0/dist/css/tabulator.min.css" rel="stylesheet">
+    <title>Change Tasks</title>
+  </head>
+  <body>
+    <div class="header">
+      <button class="back-button" onclick="window.location.href='index.html'">← Back</button>
+      <h1>Change Tasks (CHT.csv)</h1>
+    </div>
+
+    <div id="tableContainer">
+      <div id="change-tasks-table"></div>
+    </div>
+
+    <script src="./renderer.js"></script>
+    <script src="https://unpkg.com/tabulator-tables@5.6.0/dist/js/tabulator.min.js"></script>
+    <script>
+      const changeTasksData = [
+        { id: "CT001", crId: "CR001", task: "Backup System", assignee: "John Doe", status: "Completed", plannedStart: "2024-02-01 22:00", plannedEnd: "2024-02-01 23:00" },
+        { id: "CT002", crId: "CR001", task: "Apply Kernel Patch", assignee: "Mike Johnson", status: "Pending", plannedStart: "2024-02-01 23:00", plannedEnd: "2024-02-02 01:00" },
+        { id: "CT003", crId: "CR002", task: "Database Backup", assignee: "Jane Smith", status: "In Progress", plannedStart: "2024-02-15 20:00", plannedEnd: "2024-02-15 21:00" }
+      ];
+
+      document.addEventListener('DOMContentLoaded', () => {
+        new Tabulator("#change-tasks-table", {
+          data: changeTasksData,
+          layout: "fitColumns",
+          pagination: "local",
+          paginationSize: 10,
+          columns: [
+            { title: "Task ID", field: "id", headerFilter: "input" },
+            { title: "CR ID", field: "crId", headerFilter: "input" },
+            { title: "Task Description", field: "task", headerFilter: "input" },
+            { title: "Assignee", field: "assignee", headerFilter: "input" },
+            { title: "Status", field: "status", headerFilter: "select", headerFilterParams: { values: ["Pending", "In Progress", "Completed", "Failed"] } },
+            { title: "Planned Start", field: "plannedStart", headerFilter: "input" },
+            { title: "Planned End", field: "plannedEnd", headerFilter: "input" }
+          ]
+        });
+      });
+    </script>
+  </body>
+</html>

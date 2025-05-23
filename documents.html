@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'">
+    <link href="./styles.css" rel="stylesheet">
+    <title>Documents Vault</title>
+  </head>
+  <body>
+    <div class="header">
+      <button class="back-button" onclick="window.location.href='index.html'">← Back</button>
+      <h1>Documents Vault (ALL.Basis.Docs.xlsx)</h1>
+    </div>
+
+    <div class="search-container">
+      <input type="text" id="docSearch" placeholder="Search documents...">
+    </div>
+
+    <div class="tile-container">
+      <div id="docs-vault-list"></div>
+    </div>
+
+    <script>
+      const docsVaultData = [
+        { id: 1, name: 'SAP ECC Upgrade Guide', category: 'Upgrades', link: 'https://sharepoint.company.com/docs/sap-ecc-upgrade-guide.pdf' },
+        { id: 2, name: 'S/4HANA Migration Checklist', category: 'Migrations', link: 'https://sharepoint.company.com/docs/s4hana-migration-checklist.docx' }
+      ];
+
+      function displayDocs(docs) {
+        const docsListDiv = document.getElementById('docs-vault-list');
+        docsListDiv.innerHTML = '';
+
+        docs.forEach(doc => {
+          const docTile = document.createElement('div');
+          docTile.className = 'tile doc-tile';
+          docTile.innerHTML = `
+            <div class="tile-icon">📄</div>
+            <div class="tile-title">${doc.name}</div>
+            <div class="tile-subtitle">${doc.category}</div>
+            <button class="tile-button" onclick="openExternalLink('${doc.link}')">Open Document</button>
+          `;
+          docsListDiv.appendChild(docTile);
+        });
+      }
+
+      document.getElementById('docSearch').addEventListener('keyup', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const filteredDocs = docsVaultData.filter(doc => 
+          doc.name.toLowerCase().includes(searchTerm) || 
+          doc.category.toLowerCase().includes(searchTerm)
+        );
+        displayDocs(filteredDocs);
+      });
+
+      // Initial load
+      document.addEventListener('DOMContentLoaded', () => {
+        displayDocs(docsVaultData);
+      });
+    </script>
+  </body>
+</html>

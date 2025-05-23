@@ -9,16 +9,16 @@ async function loadCSV() {
         let versionPath;
         
         if (process.env.NODE_ENV === 'development') {
-            csvPath = path.join(__dirname, 'pacadm.csv');
-            versionPath = path.join(__dirname, 'version.json');
+            csvPath = path.join(__dirname, 'resources', 'PACADM.csv');
+            versionPath = path.join(__dirname, 'resources', 'version.json');
         } else {
-            csvPath = path.join(app.getPath('userData'), 'pacadm.csv');
-            versionPath = path.join(app.getPath('userData'), 'version.json');
+            csvPath = path.join(app.getPath('userData'), 'resources', 'PACADM.csv');
+            versionPath = path.join(app.getPath('userData'), 'resources', 'version.json');
         }
 
         // Get resource paths
-        const resourceCsvPath = path.join(process.resourcesPath, 'pacadm.csv');
-        const resourceVersionPath = path.join(process.resourcesPath, 'version.json');
+        const resourceCsvPath = path.join(process.resourcesPath, 'resources', 'PACADM.csv');
+        const resourceVersionPath = path.join(process.resourcesPath, 'resources', 'version.json');
 
         // Check and update version
         let shouldUpdateFile = true;

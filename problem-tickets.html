@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'">
+    <link href="./styles.css" rel="stylesheet">
+    <link href="https://unpkg.com/tabulator-tables@5.6.0/dist/css/tabulator.min.css" rel="stylesheet">
+    <title>Problem Management</title>
+  </head>
+  <body>
+    <div class="header">
+      <button class="back-button" onclick="window.location.href='index.html'">← Back</button>
+      <h1>Problem Management (PRB.csv)</h1>
+    </div>
+
+    <div id="tableContainer">
+      <div id="problem-tickets-table"></div>
+    </div>
+
+    <script src="./renderer.js"></script>
+    <script src="https://unpkg.com/tabulator-tables@5.6.0/dist/js/tabulator.min.js"></script>
+    <script>
+      const problemTicketsData = [
+        { id: "PRB001", title: "Recurring System Slowdown", relatedInc: "INC001,INC005", owner: "John Doe", status: "Investigation", priority: "High", created: "2024-01-10" },
+        { id: "PRB002", title: "Batch Job Failures", relatedInc: "INC003", owner: "Jane Smith", status: "Root Cause Found", priority: "Medium", created: "2024-01-12" },
+        { id: "PRB003", title: "Memory Leaks", relatedInc: "INC008,INC009", owner: "Mike Johnson", status: "Resolved", priority: "Critical", created: "2024-01-14" }
+      ];
+
+      document.addEventListener('DOMContentLoaded', () => {
+        new Tabulator("#problem-tickets-table", {
+          data: problemTicketsData,
+          layout: "fitColumns",
+          pagination: "local",
+          paginationSize: 10,
+          columns: [
+            { title: "Problem ID", field: "id", headerFilter: "input" },
+            { title: "Title", field: "title", headerFilter: "input" },
+            { title: "Related Incidents", field: "relatedInc", headerFilter: "input" },
+            { title: "Owner", field: "owner", headerFilter: "input" },
+            { title: "Status", field: "status", headerFilter: "select", headerFilterParams: { values: ["Investigation", "Root Cause Found", "Solution Identified", "Resolved", "Closed"] } },
+            { title: "Priority", field: "priority", headerFilter: "select", headerFilterParams: { values: ["Critical", "High", "Medium", "Low"] } },
+            { title: "Created Date", field: "created", headerFilter: "input" }
+          ]
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'">
+    <link href="./styles.css" rel="stylesheet">
+    <link href="https://unpkg.com/tabulator-tables@5.6.0/dist/css/tabulator.min.css" rel="stylesheet">
+    <title>Incident Management</title>
+  </head>
+  <body>
+    <div class="header">
+      <button class="back-button" onclick="window.location.href='index.html'">← Back</button>
+      <h1>Incident Management (INM.csv)</h1>
+    </div>
+
+    <div id="tableContainer">
+      <div id="incidents-table"></div>
+    </div>
+
+    <script src="./renderer.js"></script>
+    <script src="https://unpkg.com/tabulator-tables@5.6.0/dist/js/tabulator.min.js"></script>
+    <script>
+      const incidentsData = [
+        { id: "INC001", title: "SAP System Down", priority: "Critical", status: "Open", assignee: "John Doe", created: "2024-01-15" },
+        { id: "INC002", title: "Performance Issues", priority: "High", status: "In Progress", assignee: "Jane Smith", created: "2024-01-16" },
+        { id: "INC003", title: "User Access Issue", priority: "Medium", status: "Resolved", assignee: "Mike Johnson", created: "2024-01-17" }
+      ];
+
+      document.addEventListener('DOMContentLoaded', () => {
+        new Tabulator("#incidents-table", {
+          data: incidentsData,
+          layout: "fitColumns",
+          pagination: "local",
+          paginationSize: 10,
+          columns: [
+            { title: "Ticket ID", field: "id", headerFilter: "input" },
+            { title: "Title", field: "title", headerFilter: "input" },
+            { title: "Priority", field: "priority", headerFilter: "select", headerFilterParams: { values: ["Critical", "High", "Medium", "Low"] } },
+            { title: "Status", field: "status", headerFilter: "select", headerFilterParams: { values: ["Open", "In Progress", "Resolved", "Closed"] } },
+            { title: "Assignee", field: "assignee", headerFilter: "input" },
+            { title: "Created Date", field: "created", headerFilter: "input" }
+          ]
+        });
+      });
+    </script>
+  </body>
+</html>

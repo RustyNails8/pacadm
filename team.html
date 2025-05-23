@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'">
+    <link href="./styles.css" rel="stylesheet">
+    <title>Team Directory</title>
+  </head>
+  <body>
+    <div class="header">
+      <button class="back-button" onclick="window.location.href='index.html'">← Back</button>
+      <h1>SAP Basis Team Directory</h1>
+    </div>
+
+    <div class="search-container">
+      <input type="text" id="team-search" placeholder="Search team members..." onkeyup="filterTeamMembers()">
+    </div>
+
+    <div class="tile-container">
+      <div id="team-members-list"></div>
+    </div>
+
+    <script>
+      const teamMembersData = [
+        {
+          name: "John Doe",
+          role: "Senior Basis Administrator",
+          email: "john.doe@company.com",
+          adId: "JDOE",
+          linuxId: "jdoe",
+          contact: "+1-555-0101",
+          availability: "Available"
+        },
+        {
+          name: "Jane Smith",
+          role: "Lead Basis Consultant",
+          email: "jane.smith@company.com",
+          adId: "JSMITH",
+          linuxId: "jsmith",
+          contact: "+1-555-0102",
+          availability: "Working Remotely"
+        },
+        {
+          name: "Mike Johnson",
+          role: "Basis Administrator",
+          email: "mike.johnson@company.com",
+          adId: "MJOHNSON",
+          linuxId: "mjohnson",
+          contact: "+1-555-0103",
+          availability: "On Leave"
+        }
+      ];
+
+      function displayTeamMembers(members) {
+        const teamListDiv = document.getElementById('team-members-list');
+        teamListDiv.innerHTML = '';
+
+        members.forEach(member => {
+          const memberTile = document.createElement('div');
+          memberTile.className = 'tile member-tile';
+          memberTile.innerHTML = `
+            <div class="tile-icon">👤</div>
+            <div class="tile-title">${member.name}</div>
+            <div class="tile-subtitle">${member.role}</div>
+            <div class="tile-details">
+              <p><strong>Email:</strong> <a href="mailto:${member.email}">${member.email}</a></p>
+              <p><strong>AD ID:</strong> ${member.adId}</p>
+              <p><strong>Linux ID:</strong> ${member.linuxId}</p>
+              <p><strong>Contact:</strong> ${member.contact}</p>
+              <p class="status-${member.availability.toLowerCase().replace(' ', '-')}">${member.availability}</p>
+            </div>
+          `;
+          teamListDiv.appendChild(memberTile);
+        });
+      }
+
+      function filterTeamMembers() {
+        const searchTerm = document.getElementById('team-search').value.toLowerCase();
+        const filteredMembers = teamMembersData.filter(member =>
+          member.name.toLowerCase().includes(searchTerm) ||
+          member.role.toLowerCase().includes(searchTerm) ||
+          member.email.toLowerCase().includes(searchTerm) ||
+          member.adId.toLowerCase().includes(searchTerm) ||
+          member.linuxId.toLowerCase().includes(searchTerm) ||
+          member.contact.includes(searchTerm)
+        );
+        displayTeamMembers(filteredMembers);
+      }
+
+      // Initial load
+      document.addEventListener('DOMContentLoaded', () => {
+        displayTeamMembers(teamMembersData);
+      });
+    </script>
+  </body>
+</html>
