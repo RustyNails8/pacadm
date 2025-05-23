@@ -6,7 +6,8 @@
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
-    "make": "electron-forge make"
+    "make": "electron-forge make",
+    "update-csv": "node updateVersion.js && npm run make"
   },
   "repository": {
     "type": "git",
@@ -44,7 +45,8 @@
     "forge": {
       "packagerConfig": {
         "extraResource": [
-          "pacadm.csv"
+          "pacadm.csv",
+          "version.json"
         ]
       },
       "makers": [

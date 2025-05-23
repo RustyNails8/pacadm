@@ -6,19 +6,32 @@ const { app } = require('@electron/remote');
 async function loadCSV() {
     try {
         let csvPath;
+        let versionPath;
         
-        // In development
         if (process.env.NODE_ENV === 'development') {
             csvPath = path.join(__dirname, 'pacadm.csv');
+            versionPath = path.join(__dirname, 'version.json');
         } else {
-            // In production
             csvPath = path.join(app.getPath('userData'), 'pacadm.csv');
+            versionPath = path.join(app.getPath('userData'), 'version.json');
         }
 
-        // Check if file exists in userData, if not, copy from resources
-        if (!fs.existsSync(csvPath)) {
-            const resourcePath = path.join(process.resourcesPath, 'pacadm.csv');
-            fs.copyFileSync(resourcePath, csvPath);
+        // Get resource paths
+        const resourceCsvPath = path.join(process.resourcesPath, 'pacadm.csv');
+        const resourceVersionPath = path.join(process.resourcesPath, 'version.json');
+
+        // Check and update version
+        let shouldUpdateFile = true;
+        if (fs.existsSync(versionPath)) {
+            const currentVersion = JSON.parse(fs.readFileSync(versionPath, 'utf-8')).csvVersion;
+            const resourceVersion = JSON.parse(fs.readFileSync(resourceVersionPath, 'utf-8')).csvVersion;
+            shouldUpdateFile = currentVersion !== resourceVersion;
+        }
+
+        // Copy new version if needed
+        if (shouldUpdateFile) {
+            fs.copyFileSync(resourceCsvPath, csvPath);
+            fs.copyFileSync(resourceVersionPath, versionPath);
         }
 
         const data = await fs.promises.readFile(csvPath, 'utf-8');
