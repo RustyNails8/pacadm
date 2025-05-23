@@ -39,13 +39,17 @@ async function loadCSV() {
         // Split the CSV into rows
         const rows = data.split('\n');
         
-        // Get headers from first row
-        const headers = rows[0].split(',').map(header => header.trim());
+        // Get headers from first row and filter only needed columns
+        // IMPORTANT: The filtered headers here are used as source of truth
+        // dataReader.js must use the same headers in its requiredHeaders array
+        const allHeaders = rows[0].split(',').map(header => header.trim());
+        const requiredHeaders = ['CWD', 'OS_Patch', 'OS_kernel', 'SERVICE_TYPE'];
+        const headerIndices = requiredHeaders.map(header => allHeaders.indexOf(header));
         
         // Create table headers
         const tableHeader = document.getElementById('tableHeader');
-        tableHeader.innerHTML = ''; // Clear existing headers
-        headers.forEach(header => {
+        tableHeader.innerHTML = '';
+        requiredHeaders.forEach(header => {
             const th = document.createElement('th');
             th.textContent = header;
             tableHeader.appendChild(th);
@@ -53,16 +57,16 @@ async function loadCSV() {
 
         // Create table rows
         const tableBody = document.getElementById('tableBody');
-        tableBody.innerHTML = ''; // Clear existing rows
+        tableBody.innerHTML = '';
         for (let i = 1; i < rows.length; i++) {
             if (rows[i].trim() === '') continue;
             
             const row = document.createElement('tr');
             const cells = rows[i].split(',');
             
-            cells.forEach(cell => {
+            headerIndices.forEach(index => {
                 const td = document.createElement('td');
-                td.textContent = cell.trim();
+                td.textContent = cells[index]?.trim() || '';
                 row.appendChild(td);
             });
             

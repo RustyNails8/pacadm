@@ -77,7 +77,18 @@ class DataReader {
         const filterContainer = document.getElementById('columnFilters');
         filterContainer.innerHTML = '';
 
-        this.headers.forEach(header => {
+        // Define required headers for PACADM page
+        // IMPORTANT: These required headers must match the ones in csvReader.js
+        // See csvReader.js -> requiredHeaders array for the source of truth
+        const requiredHeaders = ['CWD', 'OS_Patch', 'OS_kernel', 'SERVICE_TYPE'];
+        
+        // Filter headers based on page
+        const pageName = window.location.pathname.split('/').pop();
+        const headersToShow = pageName === 'pacadm.html' 
+            ? this.headers.filter(header => requiredHeaders.includes(header))
+            : this.headers;
+
+        headersToShow.forEach(header => {
             const uniqueValues = [...new Set(this.data.map(row => row[header]))];
             
             const filterDiv = document.createElement('div');
