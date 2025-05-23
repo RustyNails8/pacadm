@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'">
+    <link href="./styles.css" rel="stylesheet">
+    <title>Documents Vault</title>
+  </head>
+  <body>
+    <div class="header">
+      <button class="back-button" onclick="window.location.href='index.html'">← Back</button>
+      <h1>Documents Vault (ALL.Basis.Docs.xlsx)</h1>
+    </div>
+
+    <div class="search-container">
+      <input type="text" id="docSearch" placeholder="Search documents...">
+    </div>
+
+    <div class="bg-white p-6 rounded-xl shadow-lg">
+      <div id="docs-vault-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Documents will be loaded here -->
+      </div>
+    </div>
+
+    <script>
+      // Using dummy data from index_alt.html
+      const docsVaultData = [
+        { id: 1, name: 'SAP ECC Upgrade Guide', category: 'Upgrades', link: 'https://sharepoint.company.com/docs/sap-ecc-upgrade-guide.pdf' },
+        { id: 2, name: 'S/4HANA Migration Checklist', category: 'Migrations', link: 'https://sharepoint.company.com/docs/s4hana-migration-checklist.docx' },
+        // ... rest of the data
+      ];
+
+      function displayDocs(docs) {
+        const docsListDiv = document.getElementById('docs-vault-list');
+        docsListDiv.innerHTML = '';
+
+        docs.forEach(doc => {
+          const docCard = document.createElement('div');
+          docCard.className = 'bg-gray-50 p-4 rounded-lg shadow flex flex-col justify-between';
+          docCard.innerHTML = `
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">${doc.name}</h3>
+            <p class="text-sm text-gray-600 mb-3">Category: ${doc.category}</p>
+            <a href="#" onclick="openExternalLink('${doc.link}')" class="text-indigo-600 hover:underline">
+              Open Document
+            </a>
+          `;
+          docsListDiv.appendChild(docCard);
+        });
+      }
+
+      document.getElementById('docSearch').addEventListener('keyup', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const filteredDocs = docsVaultData.filter(doc => 
+          doc.name.toLowerCase().includes(searchTerm) || 
+          doc.category.toLowerCase().includes(searchTerm)
+        );
+        displayDocs(filteredDocs);
+      });
+
+      // Initial load
+      document.addEventListener('DOMContentLoaded', () => {
+        displayDocs(docsVaultData);
+      });
+    </script>
+  </body>
+</html>

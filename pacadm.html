@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'">
+    <link href="./styles.css" rel="stylesheet">
+    <title>PACADM Inventory</title>
+  </head>
+  <body>
+    <div class="header">
+      <button class="back-button" onclick="window.location.href='index.html'">← Back</button>
+      <h1>PACADM Inventory</h1>
+    </div>
+
+    <div class="filter-container">
+      <div id="columnFilters"></div>
+    </div>
+    
+    <div class="search-container">
+      <input type="text" id="searchInput" placeholder="Search in table...">
+    </div>
+    
+    <div id="tableContainer">
+      <table id="dataTable">
+        <thead>
+          <tr id="tableHeader"></tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+
+    <script src="./renderer.js"></script>
+    <script src="./dataReader.js"></script>
+  </body>
+</html>

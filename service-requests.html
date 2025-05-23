@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'">
+    <link href="./styles.css" rel="stylesheet">
+    <link href="https://unpkg.com/tabulator-tables@5.6.0/dist/css/tabulator.min.css" rel="stylesheet">
+    <title>Service Requests</title>
+  </head>
+  <body>
+    <div class="header">
+      <button class="back-button" onclick="window.location.href='index.html'">← Back</button>
+      <h1>Service Requests (SRV.csv)</h1>
+    </div>
+
+    <div id="tableContainer">
+      <div id="service-requests-table"></div>
+    </div>
+
+    <script src="./renderer.js"></script>
+    <script src="https://unpkg.com/tabulator-tables@5.6.0/dist/js/tabulator.min.js"></script>
+    <script>
+      const serviceRequestsData = [
+        { id: "SR001", type: "Access Request", requester: "Alice Brown", system: "ERP", status: "Pending", created: "2024-01-15", dueDate: "2024-01-17" },
+        { id: "SR002", type: "New Instance", requester: "Bob Wilson", system: "CRM", status: "Approved", created: "2024-01-16", dueDate: "2024-01-20" },
+        { id: "SR003", type: "System Refresh", requester: "Carol Davis", system: "BW", status: "Completed", created: "2024-01-14", dueDate: "2024-01-16" }
+      ];
+
+      document.addEventListener('DOMContentLoaded', () => {
+        new Tabulator("#service-requests-table", {
+          data: serviceRequestsData,
+          layout: "fitColumns",
+          pagination: "local",
+          paginationSize: 10,
+          columns: [
+            { title: "SR ID", field: "id", headerFilter: "input" },
+            { title: "Type", field: "type", headerFilter: "select", headerFilterParams: { values: ["Access Request", "New Instance", "System Refresh", "Other"] } },
+            { title: "Requester", field: "requester", headerFilter: "input" },
+            { title: "System", field: "system", headerFilter: "input" },
+            { title: "Status", field: "status", headerFilter: "select", headerFilterParams: { values: ["Pending", "Approved", "In Progress", "Completed", "Rejected"] } },
+            { title: "Created Date", field: "created", headerFilter: "input" },
+            { title: "Due Date", field: "dueDate", headerFilter: "input" }
+          ]
+        });
+      });
+    </script>
+  </body>
+</html>

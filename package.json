@@ -1,6 +1,6 @@
 {
   "name": "pacadm",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "A minimal Electron application",
   "main": "main.js",
   "scripts": {
@@ -39,7 +39,8 @@
   "homepage": "https://github.com/RustyNails8/pacadm#readme",
   "dependencies": {
     "@electron/remote": "^2.1.2",
-    "electron-squirrel-startup": "^1.0.1"
+    "electron-squirrel-startup": "^1.0.1",
+    "xlsx": "^0.18.5"
   },
   "config": {
     "forge": {

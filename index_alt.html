@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAP Basis Team Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/tabulator-tables@5.6.0/dist/css/tabulator.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5; /* Light gray background */
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .tile {
+            @apply bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col items-center justify-center text-center;
+            min-height: 160px; /* Ensure consistent tile height */
+        }
+        .tile-icon {
+            @apply text-5xl mb-4 text-indigo-600;
+        }
+        .tile-title {
+            @apply text-xl font-semibold text-gray-800;
+        }
+        .tile-description {
+            @apply text-sm text-gray-600 mt-2;
+        }
+        .page-header {
+            @apply text-3xl font-bold text-gray-800 mb-6;
+        }
+        .back-button {
+            @apply bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors duration-200 mb-6 flex items-center;
+        }
+        .table-container {
+            @apply bg-white p-6 rounded-xl shadow-lg;
+        }
+        .tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-col-title {
+            font-weight: 600; /* Make table headers bolder */
+        }
+        /* Custom styles for Tabulator filters */
+        .tabulator .tabulator-header input {
+            @apply border border-gray-300 rounded-md p-1 text-sm focus:ring-indigo-500 focus:border-indigo-500;
+        }
+        .tabulator .tabulator-tableHolder {
+            border-radius: 0.5rem; /* Apply rounded corners to table body */
+        }
+        .tabulator .tabulator-row {
+            @apply border-b border-gray-200;
+        }
+        .tabulator .tabulator-row:last-child {
+            border-bottom: none;
+        }
+        .tabulator .tabulator-row.tabulator-selected {
+            background-color: #e0f2fe; /* Light blue for selected rows */
+        }
+        .tabulator-page {
+            @apply flex justify-center items-center mt-4;
+        }
+        .tabulator-page button {
+            @apply bg-indigo-500 text-white px-3 py-1 rounded-md mx-1 hover:bg-indigo-600 transition-colors duration-200;
+        }
+        .tabulator-page span {
+            @apply text-gray-700 mx-2;
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="container">
+        <div id="dashboard-view" class="block">
+            <h1 class="text-4xl font-extrabold text-gray-900 mb-10 text-center">SAP Basis Team Dashboard</h1>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <div class="tile" onclick="showPage('pacadm-view')">
+                    <span class="tile-icon">📄</span>
+                    <h2 class="tile-title">Inventory File</h2>
+                    <p class="tile-description">Reference PACADM.csv</p>
+                </div>
+
+                <div class="tile" onclick="showPage('sidlist-view')">
+                    <span class="tile-icon">🌳</span>
+                    <h2 class="tile-title">Landscape Owners</h2>
+                    <p class="tile-description">Reference SID.List.csv</p>
+                </div>
+
+                <div class="tile" onclick="showPage('docs-vault-view')">
+                    <span class="tile-icon">📚</span>
+                    <h2 class="tile-title">Documents Vault</h2>
+                    <p class="tile-description">ALL.Basis.Docs.xlsx</p>
+                </div>
+
+                <div class="tile" onclick="showPage('incidents-view')">
+                    <span class="tile-icon">🚨</span>
+                    <h2 class="tile-title">Daily Incidents</h2>
+                    <p class="tile-description">Open Text SMAX Tickets (INM.csv)</p>
+                </div>
+
+                <div class="tile" onclick="showPage('change-requests-view')">
+                    <span class="tile-icon">🔄</span>
+                    <h2 class="tile-title">Change Requests</h2>
+                    <p class="tile-description">Open Text SMAX (CHM.csv)</p>
+                </div>
+
+                <div class="tile" onclick="showPage('change-tasks-view')">
+                    <span class="tile-icon">📝</span>
+                    <h2 class="tile-title">Change Tasks</h2>
+                    <p class="tile-description">Open Text SMAX (CHT.csv)</p>
+                </div>
+
+                <div class="tile" onclick="showPage('service-requests-view')">
+                    <span class="tile-icon">📞</span>
+                    <h2 class="tile-title">Service Requests</h2>
+                    <p class="tile-description">Open Text SMAX (SRV.csv)</p>
+                </div>
+
+                <div class="tile" onclick="showPage('problem-tickets-view')">
+                    <span class="tile-icon">⚠️</span>
+                    <h2 class="tile-title">Problem Tickets</h2>
+                    <p class="tile-description">Open Text SMAX (CHT.csv)</p>
+                </div>
+
+                <div class="tile" onclick="showPage('team-members-view')">
+                    <span class="tile-icon">👥</span>
+                    <h2 class="tile-title">Team Members</h2>
+                    <p class="tile-description">Basis Team Contact Info</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="pacadm-view" class="hidden">
+            <button class="back-button" onclick="showPage('dashboard-view')">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                Back to Dashboard
+            </button>
+            <h1 class="page-header">Inventory File (PACADM.csv)</h1>
+            <div id="pacadm-table" class="table-container"></div>
+        </div>
+
+        <div id="sidlist-view" class="hidden">
+            <button class="back-button" onclick="showPage('dashboard-view')">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                Back to Dashboard
+            </button>
+            <h1 class="page-header">Landscape Owner File (SID.List.csv)</h1>
+            <div id="sidlist-table" class="table-container"></div>
+        </div>
+
+        <div id="docs-vault-view" class="hidden">
+            <button class="back-button" onclick="showPage('dashboard-view')">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                Back to Dashboard
+            </button>
+            <h1 class="page-header">Documents Vault (ALL.Basis.Docs.xlsx)</h1>
+            <div class="bg-white p-6 rounded-xl shadow-lg">
+                <div id="docs-vault-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    </div>
+            </div>
+        </div>
+
+        <div id="incidents-view" class="hidden">
+            <button class="back-button" onclick="showPage('dashboard-view')">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                Back to Dashboard
+            </button>
+            <h1 class="page-header">Daily Incident Tickets (INM.csv)</h1>
+            <div id="incidents-table" class="table-container"></div>
+        </div>
+
+        <div id="change-requests-view" class="hidden">
+            <button class="back-button" onclick="showPage('dashboard-view')">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                Back to Dashboard
+            </button>
+            <h1 class="page-header">Change Requests (CHM.csv)</h1>
+            <div id="change-requests-table" class="table-container"></div>
+        </div>
+
+        <div id="change-tasks-view" class="hidden">
+            <button class="back-button" onclick="showPage('dashboard-view')">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                Back to Dashboard
+            </button>
+            <h1 class="page-header">Change Tasks (CHT.csv)</h1>
+            <div id="change-tasks-table" class="table-container"></div>
+        </div>
+
+        <div id="service-requests-view" class="hidden">
+            <button class="back-button" onclick="showPage('dashboard-view')">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                Back to Dashboard
+            </button>
+            <h1 class="page-header">Service Requests (SRV.csv)</h1>
+            <div id="service-requests-table" class="table-container"></div>
+        </div>
+
+        <div id="problem-tickets-view" class="hidden">
+            <button class="back-button" onclick="showPage('dashboard-view')">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                Back to Dashboard
+            </button>
+            <h1 class="page-header">Problem Tickets (CHT.csv)</h1>
+            <div id="problem-tickets-table" class="table-container"></div>
+        </div>
+
+        <div id="team-members-view" class="hidden">
+            <button class="back-button" onclick="showPage('dashboard-view')">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                Back to Dashboard
+            </button>
+            <h1 class="page-header">Basis Team Members</h1>
+            <div class="bg-white p-6 rounded-xl shadow-lg">
+                <input type="text" id="team-search" onkeyup="filterTeamMembers()" placeholder="Search team members..."
+                       class="w-full p-2 border border-gray-300 rounded-md mb-4 focus:ring-indigo-500 focus:border-indigo-500">
+                <div id="team-members-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.6.0/dist/js/tabulator.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+
+    <script>
+        // --- Simulated Data (Replace with Electron IPC for real file loading) ---
+        // In a real Electron app, you would use ipcRenderer to communicate with the main process
+        // to read these files from the local file system.
+        // Example:
+        // const { ipcRenderer, shell } = require('electron');
+        // ipcRenderer.send('read-csv-file', 'path/to/PACADM.csv');
+        // ipcRenderer.on('csv-data-response', (event, data) => {
+        //     // Use 'data' here
+        // });
+        // shell.openExternal(url); // For opening external links
+
+        const simulatedPACADMData = [
+            { id: 1, system: 'SAP_PROD_ERP', host: 'erp-prod-01', ip: '192.168.1.10', version: 'ECC 6.0 EHP8', purpose: 'Production ERP', status: 'Active' },
+            { id: 2, system: 'SAP_DEV_CRM', host: 'crm-dev-01', ip: '192.168.1.20', version: 'CRM 7.0 EHP4', purpose: 'Development CRM', status: 'Active' },
+            { id: 3, system: 'SAP_QA_BW', host: 'bw-qa-01', ip: '192.168.1.30', version: 'BW 7.5', purpose: 'Quality Assurance BW', status: 'Active' },
+            { id: 4, system: 'SAP_DR_SRM', host: 'srm-dr-01', ip: '192.168.1.40', version: 'SRM 7.0', purpose: 'Disaster Recovery SRM', status: 'Standby' },
+            { id: 5, system: 'SAP_PROD_PO', host: 'po-prod-01', ip: '192.168.1.50', version: 'PO 7.5', purpose: 'Production Process Orchestration', status: 'Active' },
+            { id: 6, system: 'SAP_SANDBOX_HR', host: 'hr-sb-01', ip: '192.168.1.60', version: 'S/4HANA 2020', purpose: 'Sandbox HR', status: 'Maintenance' },
+            { id: 7, system: 'SAP_PROD_SCM', host: 'scm-prod-01', ip: '192.168.1.70', version: 'SCM 7.0', purpose: 'Production Supply Chain', status: 'Active' },
+            { id: 8, system: 'SAP_DEV_FIORI', host: 'fiori-dev-01', ip: '192.168.1.80', version: 'Fiori 2.0', purpose: 'Development Fiori', status: 'Active' },
+            { id: 9, system: 'SAP_QA_SOLMAN', host: 'solman-qa-01', ip: '192.168.1.90', version: 'SolMan 7.2', purpose: 'Quality Assurance Solution Manager', status: 'Active' },
+            { id: 10, system: 'SAP_PROD_GTS', host: 'gts-prod-01', ip: '192.168.1.100', version: 'GTS 11.0', purpose: 'Production Global Trade Services', status: 'Active' },
+        ];
+
+        const simulatedSIDListData = [
+            { id: 1, sid: 'ERP', owner: 'John Doe', contact: 'john.doe@example.com', primary: true },
+            { id: 2, sid: 'CRM', owner: 'Jane Smith', contact: 'jane.smith@example.com', primary: true },
+            { id: 3, sid: 'BW', owner: 'Mike Johnson', contact: 'mike.j@example.com', primary: false },
+            { id: 4, sid: 'SRM', owner: 'Sarah Lee', contact: 'sarah.lee@example.com', primary: true },
+            { id: 5, sid: 'PO', owner: 'John Doe', contact: 'john.doe@example.com', primary: false },
+            { id: 6, sid: 'HR', owner: 'Mike Johnson', contact: 'mike.j@example.com', primary: true },
+            { id: 7, sid: 'SCM', owner: 'Jane Smith', contact: 'jane.smith@example.com', primary: false },
+            { id: 8, sid: 'FIORI', owner: 'Sarah Lee', contact: 'sarah.lee@example.com', primary: false },
+            { id: 9, sid: 'SOLMAN', owner: 'David Green', contact: 'david.g@example.com', primary: true },
+            { id: 10, sid: 'GTS', owner: 'Emily White', contact: 'emily.w@example.com', primary: true },
+        ];
+
+        const simulatedDocsVaultData = [
+            { id: 1, name: 'SAP ECC Upgrade Guide', category: 'Upgrades', link: 'https://sharepoint.company.com/docs/sap-ecc-upgrade-guide.pdf' },
+            { id: 2, name: 'S/4HANA Migration Checklist', category: 'Migrations', link: 'https://sharepoint.company.com/docs/s4hana-migration-checklist.docx' },
+            { id: 3, name: 'Daily Health Check Procedure', category: 'Operations', link: 'https://sharepoint.company.com/docs/daily-health-check.pdf' },
+            { id: 4, name: 'System Refresh SOP', category: 'Operations', link: 'https://sharepoint.company.com/docs/system-refresh-sop.pptx' },
+            { id: 5, name: 'Basis Team Onboarding Guide', category: 'HR', link: 'https://sharepoint.company.com/docs/onboarding-guide.pdf' },
+            { id: 6, name: 'Security Hardening Guidelines', category: 'Security', link: 'https://sharepoint.company.com/docs/security-hardening.pdf' },
+            { id: 7, name: 'Performance Tuning Best Practices', category: 'Performance', link: 'https://sharepoint.company.com/docs/performance-tuning.pdf' },
+        ];
+
+        const simulatedIncidentData = [
+            { id: 'INC001', title: 'ERP Production System Down', status: 'Open', assignedTo: 'John Doe', priority: 'Critical', reportedDate: '2025-05-20', lastUpdate: '2025-05-24' },
+            { id: 'INC002', title: 'CRM Login Issues QA', status: 'In Progress', assignedTo: 'Jane Smith', priority: 'High', reportedDate: '2025-05-22', lastUpdate: '2025-05-23' },
+            { id: 'INC003', title: 'BW Report Performance Slow', status: 'New', assignedTo: 'Mike Johnson', priority: 'Medium', reportedDate: '2025-05-24', lastUpdate: '2025-05-24' },
+            { id: 'INC004', title: 'SRM Print Spool Error', status: 'Closed', assignedTo: 'Sarah Lee', priority: 'Low', reportedDate: '2025-05-18', lastUpdate: '2025-05-20' },
+            { id: 'INC005', title: 'PO Interface Failure', status: 'Open', assignedTo: 'John Doe', priority: 'High', reportedDate: '2025-05-23', lastUpdate: '2025-05-24' },
+            { id: 'INC006', title: 'HR Payroll Job Failed', status: 'Resolved', assignedTo: 'Mike Johnson', priority: 'Critical', reportedDate: '2025-05-21', lastUpdate: '2025-05-22' },
+            { id: 'INC007', title: 'SCM Batch Job Stuck', status: 'In Progress', assignedTo: 'Jane Smith', priority: 'Medium', reportedDate: '2025-05-24', lastUpdate: '2025-05-24' },
+        ];
+
+        const simulatedChangeRequestData = [
+            { id: 'CRQ001', title: 'ERP Kernel Upgrade', status: 'Approved', assignedTo: 'John Doe', scheduledDate: '2025-06-10', type: 'Standard' },
+            { id: 'CRQ002', title: 'CRM System Refresh', status: 'Pending Approval', assignedTo: 'Jane Smith', scheduledDate: '2025-06-15', type: 'Major' },
+            { id: 'CRQ003', title: 'BW Patch Installation', status: 'In Progress', assignedTo: 'Mike Johnson', scheduledDate: '2025-05-25', type: 'Minor' },
+            { id: 'CRQ004', title: 'SRM Database Migration', status: 'Completed', assignedTo: 'Sarah Lee', scheduledDate: '2025-05-19', type: 'Major' },
+            { id: 'CRQ005', title: 'PO System Parameter Change', status: 'New', assignedTo: 'John Doe', scheduledDate: '2025-05-28', type: 'Standard' },
+        ];
+
+        const simulatedChangeTaskData = [
+            { id: 'CTK001', crqId: 'CRQ001', title: 'Backup ERP System', status: 'Completed', assignedTo: 'John Doe', dueDate: '2025-06-09' },
+            { id: 'CTK002', crqId: 'CRQ001', title: 'Apply Kernel Patch', status: 'In Progress', assignedTo: 'Jane Smith', dueDate: '2025-06-10' },
+            { id: 'CTK003', crqId: 'CRQ002', title: 'Pre-refresh Checks CRM', status: 'New', assignedTo: 'Mike Johnson', dueDate: '2025-06-14' },
+            { id: 'CTK004', crqId: 'CRQ003', title: 'Download BW Patches', status: 'Completed', assignedTo: 'Sarah Lee', dueDate: '2025-05-24' },
+            { id: 'CTK005', crqId: 'CRQ003', title: 'Install BW Patches', status: 'New', assignedTo: 'Mike Johnson', dueDate: '2025-05-25' },
+        ];
+
+        const simulatedServiceRequestData = [
+            { id: 'SRV001', title: 'New User Account Creation', status: 'In Progress', requestedBy: 'HR Dept', assignedTo: 'Sarah Lee', requestedDate: '2025-05-23' },
+            { id: 'SRV002', title: 'SAP GUI Installation', status: 'New', requestedBy: 'Finance User', assignedTo: 'Emily White', requestedDate: '2025-05-24' },
+            { id: 'SRV003', title: 'Printer Configuration', status: 'Closed', requestedBy: 'Sales Team', assignedTo: 'David Green', requestedDate: '2025-05-20' },
+            { id: 'SRV004', title: 'Database Access Request', status: 'Approved', requestedBy: 'BI Team', assignedTo: 'John Doe', requestedDate: '2025-05-22' },
+        ];
+
+        const simulatedProblemTicketData = [
+            { id: 'PRB001', title: 'Frequent ERP System Freezes', status: 'Open', assignedTo: 'John Doe', rootCause: 'Under investigation', createdDate: '2025-05-10' },
+            { id: 'PRB002', title: 'CRM Background Job Failures', status: 'In Progress', assignedTo: 'Jane Smith', rootCause: 'Memory leak identified', createdDate: '2025-05-15' },
+            { id: 'PRB003', title: 'BW Data Load Performance Degradation', status: 'New', assignedTo: 'Mike Johnson', rootCause: 'Not yet determined', createdDate: '2025-05-23' },
+        ];
+
+        const teamMembersData = [
+            { name: 'John Doe', email: 'john.doe@company.com', adId: 'jdoe', linuxId: 'jdoe_linux', contact: '+1234567890', availability: 'Available', role: 'Team Lead' },
+            { name: 'Jane Smith', email: 'jane.smith@company.com', adId: 'jsmith', linuxId: 'jsmith_linux', contact: '+1234567891', availability: 'Available', role: 'Basis Admin' },
+            { name: 'Mike Johnson', email: 'mike.j@company.com', adId: 'mjohnson', linuxId: 'mjohnson_linux', contact: '+1234567892', availability: 'On Leave', role: 'Basis Admin' },
+            { name: 'Sarah Lee', email: 'sarah.lee@company.com', adId: 'slee', linuxId: 'slee_linux', contact: '+1234567893', availability: 'Working Remotely', role: 'Basis Admin' },
+            { name: 'David Green', email: 'david.g@company.com', adId: 'dgreen', linuxId: 'dgreen_linux', contact: '+1234567894', availability: 'Available', role: 'Basis Admin' },
+            { name: 'Emily White', email: 'emily.w@company.com', adId: 'ewhite', linuxId: 'ewhite_linux', contact: '+1234567895', availability: 'Available', role: 'Junior Basis' },
+        ];
+
+        // --- Global Variables for Tabulator Instances ---
+        let pacadmTable, sidlistTable, incidentsTable, changeRequestsTable, changeTasksTable, serviceRequestsTable, problemTicketsTable;
+
+        // --- Page Navigation Logic ---
+        const views = ['dashboard-view', 'pacadm-view', 'sidlist-view', 'docs-vault-view', 'incidents-view', 'change-requests-view', 'change-tasks-view', 'service-requests-view', 'problem-tickets-view', 'team-members-view'];
+
+        function showPage(pageId) {
+            views.forEach(viewId => {
+                const viewElement = document.getElementById(viewId);
+                if (viewElement) {
+                    viewElement.classList.add('hidden');
+                }
+            });
+            const targetView = document.getElementById(pageId);
+            if (targetView) {
+                targetView.classList.remove('hidden');
+            }
+
+            // Load data for the respective page when it becomes visible
+            switch (pageId) {
+                case 'pacadm-view':
+                    loadCSVTable('pacadm-table', simulatedPACADMData, [
+                        { title: "System", field: "system", headerFilter: "input" },
+                        { title: "Host", field: "host", headerFilter: "input" },
+                        { title: "IP Address", field: "ip", headerFilter: "input" },
+                        { title: "Version", field: "version", headerFilter: "input" },
+                        { title: "Purpose", field: "purpose", headerFilter: "input" },
+                        { title: "Status", field: "status", headerFilter: "input" },
+                    ]);
+                    break;
+                case 'sidlist-view':
+                    loadCSVTable('sidlist-table', simulatedSIDListData, [
+                        { title: "SID", field: "sid", headerFilter: "input" },
+                        { title: "Owner", field: "owner", headerFilter: "input" },
+                        { title: "Contact", field: "contact", headerFilter: "input" },
+                        { title: "Primary", field: "primary", formatter: "tickCross", headerFilter: "tickCross" },
+                    ]);
+                    break;
+                case 'docs-vault-view':
+                    loadDocsVault();
+                    break;
+                case 'incidents-view':
+                    loadCSVTable('incidents-table', simulatedIncidentData, [
+                        { title: "ID", field: "id", headerFilter: "input" },
+                        { title: "Title", field: "title", headerFilter: "input" },
+                        { title: "Status", field: "status", headerFilter: "input" },
+                        { title: "Assigned To", field: "assignedTo", headerFilter: "input" },
+                        { title: "Priority", field: "priority", headerFilter: "input" },
+                        { title: "Reported Date", field: "reportedDate", headerFilter: "input" },
+                        { title: "Last Update", field: "lastUpdate", headerFilter: "input" },
+                    ]);
+                    break;
+                case 'change-requests-view':
+                    loadCSVTable('change-requests-table', simulatedChangeRequestData, [
+                        { title: "ID", field: "id", headerFilter: "input" },
+                        { title: "Title", field: "title", headerFilter: "input" },
+                        { title: "Status", field: "status", headerFilter: "input" },
+                        { title: "Assigned To", field: "assignedTo", headerFilter: "input" },
+                        { title: "Scheduled Date", field: "scheduledDate", headerFilter: "input" },
+                        { title: "Type", field: "type", headerFilter: "input" },
+                    ]);
+                    break;
+                case 'change-tasks-view':
+                    loadCSVTable('change-tasks-table', simulatedChangeTaskData, [
+                        { title: "ID", field: "id", headerFilter: "input" },
+                        { title: "CRQ ID", field: "crqId", headerFilter: "input" },
+                        { title: "Title", field: "title", headerFilter: "input" },
+                        { title: "Status", field: "status", headerFilter: "input" },
+                        { title: "Assigned To", field: "assignedTo", headerFilter: "input" },
+                        { title: "Due Date", field: "dueDate", headerFilter: "input" },
+                    ]);
+                    break;
+                case 'service-requests-view':
+                    loadCSVTable('service-requests-table', simulatedServiceRequestData, [
+                        { title: "ID", field: "id", headerFilter: "input" },
+                        { title: "Title", field: "title", headerFilter: "input" },
+                        { title: "Status", field: "status", headerFilter: "input" },
+                        { title: "Requested By", field: "requestedBy", headerFilter: "input" },
+                        { title: "Assigned To", field: "assignedTo", headerFilter: "input" },
+                        { title: "Requested Date", field: "requestedDate", headerFilter: "input" },
+                    ]);
+                    break;
+                case 'problem-tickets-view':
+                    loadCSVTable('problem-tickets-table', simulatedProblemTicketData, [
+                        { title: "ID", field: "id", headerFilter: "input" },
+                        { title: "Title", field: "title", headerFilter: "input" },
+                        { title: "Status", field: "status", headerFilter: "input" },
+                        { title: "Assigned To", field: "assignedTo", headerFilter: "input" },
+                        { title: "Root Cause", field: "rootCause", headerFilter: "input" },
+                        { title: "Created Date", field: "createdDate", headerFilter: "input" },
+                    ]);
+                    break;
+                case 'team-members-view':
+                    displayTeamMembers(teamMembersData);
+                    break;
+            }
+        }
+
+        // --- Generic Tabulator Table Loader ---
+        function loadCSVTable(elementId, data, columns) {
+            // Destroy existing table if it exists to prevent re-initialization issues
+            let tableInstance;
+            switch(elementId) {
+                case 'pacadm-table': tableInstance = pacadmTable; break;
+                case 'sidlist-table': tableInstance = sidlistTable; break;
+                case 'incidents-table': tableInstance = incidentsTable; break;
+                case 'change-requests-table': tableInstance = changeRequestsTable; break;
+                case 'change-tasks-table': tableInstance = changeTasksTable; break;
+                case 'service-requests-table': tableInstance = serviceRequestsTable; break;
+                case 'problem-tickets-table': tableInstance = problemTicketsTable; break;
+            }
+
+            if (tableInstance) {
+                tableInstance.destroy();
+            }
+
+            // Initialize Tabulator
+            const table = new Tabulator(`#${elementId}`, {
+                data: data,
+                layout: "fitColumns", // Fit columns to width of table
+                responsiveLayout: "hide", // Hide columns that don't fit on smaller screens
+                tooltips: true, // Show tool tips on cells
+                addRowPos: "top", // When adding a row, add it to the top of the table
+                history: true, // Enable undo/redo data manipulation
+                pagination: "local", // Enable local pagination
+                paginationSize: 10, // Number of rows per page
+                paginationSizeSelector: [5, 10, 20, 50, 100], // Allow selection of pagination size
+                movableColumns: true, // Allow column order to be changed
+                resizableRows: true, // Allow row height to be changed
+                columns: columns,
+                headerFilterLiveFilter: true, // Apply filters as user types
+            });
+
+            // Store the table instance globally
+            switch(elementId) {
+                case 'pacadm-table': pacadmTable = table; break;
+                case 'sidlist-table': sidlistTable = table; break;
+                case 'incidents-table': incidentsTable = table; break;
+                case 'change-requests-table': changeRequestsTable = table; break;
+                case 'change-tasks-table': changeTasksTable = table; break;
+                case 'service-requests-table': serviceRequestsTable = table; break;
+                case 'problem-tickets-table': problemTicketsTable = table; break;
+            }
+        }
+
+        // --- Documents Vault Logic ---
+        function loadDocsVault() {
+            const docsListDiv = document.getElementById('docs-vault-list');
+            docsListDiv.innerHTML = ''; // Clear previous content
+
+            simulatedDocsVaultData.forEach(doc => {
+                const docCard = document.createElement('div');
+                docCard.className = 'bg-gray-50 p-4 rounded-lg shadow flex flex-col justify-between';
+                docCard.innerHTML = `
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">${doc.name}</h3>
+                    <p class="text-sm text-gray-600 mb-3">Category: ${doc.category}</p>
+                    <a href="#" onclick="openExternalLink('${doc.link}')" class="text-indigo-600 hover:underline flex items-center text-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                        Open Document
+                    </a>
+                `;
+                docsListDiv.appendChild(docCard);
+            });
+        }
+
+        // Function to open external links (for Electron's shell.openExternal)
+        function openExternalLink(url) {
+            // In a real Electron app:
+            // const { shell } = require('electron');
+            // shell.openExternal(url);
+            // For browser demo:
+            window.open(url, '_blank');
+            console.log(`Attempting to open external link: ${url}`);
+        }
+
+        // --- Team Members Logic ---
+        function displayTeamMembers(members) {
+            const teamListDiv = document.getElementById('team-members-list');
+            teamListDiv.innerHTML = ''; // Clear previous content
+
+            members.forEach(member => {
+                const memberCard = document.createElement('div');
+                memberCard.className = 'bg-gray-50 p-4 rounded-lg shadow';
+                memberCard.innerHTML = `
+                    <h3 class="text-lg font-semibold text-gray-800">${member.name}</h3>
+                    <p class="text-sm text-gray-600">Role: ${member.role}</p>
+                    <p class="text-sm text-gray-600">Email: <a href="mailto:${member.email}" class="text-indigo-600 hover:underline">${member.email}</a></p>
+                    <p class="text-sm text-gray-600">AD ID: ${member.adId}</p>
+                    <p class="text-sm text-gray-600">Linux ID: ${member.linuxId}</p>
+                    <p class="text-sm text-gray-600">Contact No.: ${member.contact}</p>
+                    <p class="text-sm text-gray-600">Availability: <span class="${getAvailabilityColor(member.availability)} font-medium">${member.availability}</span></p>
+                `;
+                teamListDiv.appendChild(memberCard);
+            });
+        }
+
+        function getAvailabilityColor(availability) {
+            switch (availability) {
+                case 'Available': return 'text-green-600';
+                case 'On Leave': return 'text-red-600';
+                case 'Working Remotely': return 'text-blue-600';
+                default: return 'text-gray-600';
+            }
+        }
+
+        function filterTeamMembers() {
+            const searchTerm = document.getElementById('team-search').value.toLowerCase();
+            const filteredMembers = teamMembersData.filter(member =>
+                member.name.toLowerCase().includes(searchTerm) ||
+                member.email.toLowerCase().includes(searchTerm) ||
+                member.adId.toLowerCase().includes(searchTerm) ||
+                member.linuxId.toLowerCase().includes(searchTerm) ||
+                member.contact.includes(searchTerm) ||
+                member.availability.toLowerCase().includes(searchTerm) ||
+                member.role.toLowerCase().includes(searchTerm)
+            );
+            displayTeamMembers(filteredMembers);
+        }
+
+        // Initialize dashboard view on load
+        document.addEventListener('DOMContentLoaded', () => {
+            showPage('dashboard-view');
+        });
+    </script>
+</body>
+</html>
