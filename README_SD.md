@@ -47,6 +47,7 @@ node -v
 npm -v
 npm init
 npm install --save-dev electron
+npm run update-csv
 npm start
 
 npm install --save-dev @electron-forge/cli
@@ -54,5 +55,11 @@ npx electron-forge import
 npm run make
 ```
 
-
+```
+copy PACADM.csv c:\Users\f5br38\github\RustyNails8\pacadm\
+npm run update-csv
+npm run make
+c:\Users\f5br38\github\RustyNails8\pacadm\out\
+npm start
+```
 
