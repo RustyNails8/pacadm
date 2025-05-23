@@ -101,8 +101,52 @@ th {
     font-size: 1rem;
 }
 
-/* Add these new styles to your existing styles.css */
+/* Additional styles for document and team tiles */
+.doc-tile, .member-tile {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border: 1px solid #e5e5e5;
+    width: 300px;
+    margin: 10px;
+}
 
+.doc-tile:hover, .member-tile:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    border-color: var(--sap-primary);
+}
+
+.tile-button {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background-color: var(--sap-primary);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.tile-button:hover {
+    background-color: var(--sap-hover);
+}
+
+.tile-details {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.tile-details p {
+    margin: 0.5rem 0;
+}
+
+.status-available { color: #22c55e; }
+.status-on-leave { color: #ef4444; }
+.status-working-remotely { color: #3b82f6; }
 .back-button {
     background: var(--sap-primary);
     color: white;

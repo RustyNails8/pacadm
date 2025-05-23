@@ -9,6 +9,15 @@
     "make": "electron-forge make",
     "update-csv": "node updateVersion.js && npm run make"
   },
+  "build": {
+    "extraResources": [
+      {
+        "from": "resources",
+        "to": "resources",
+        "filter": ["*.csv", "*.json"]
+      }
+    ]
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/RustyNails8/pacadm.git"
@@ -46,8 +55,8 @@
     "forge": {
       "packagerConfig": {
         "extraResource": [
-          "pacadm.csv",
-          "version.json"
+          "resources/PACADM.csv",
+          "resources/version.json"
         ]
       },
       "makers": [

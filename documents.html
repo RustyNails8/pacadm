@@ -16,18 +16,14 @@
       <input type="text" id="docSearch" placeholder="Search documents...">
     </div>
 
-    <div class="bg-white p-6 rounded-xl shadow-lg">
-      <div id="docs-vault-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Documents will be loaded here -->
-      </div>
+    <div class="tile-container">
+      <div id="docs-vault-list"></div>
     </div>
 
     <script>
-      // Using dummy data from index_alt.html
       const docsVaultData = [
         { id: 1, name: 'SAP ECC Upgrade Guide', category: 'Upgrades', link: 'https://sharepoint.company.com/docs/sap-ecc-upgrade-guide.pdf' },
-        { id: 2, name: 'S/4HANA Migration Checklist', category: 'Migrations', link: 'https://sharepoint.company.com/docs/s4hana-migration-checklist.docx' },
-        // ... rest of the data
+        { id: 2, name: 'S/4HANA Migration Checklist', category: 'Migrations', link: 'https://sharepoint.company.com/docs/s4hana-migration-checklist.docx' }
       ];
 
       function displayDocs(docs) {
@@ -35,16 +31,15 @@
         docsListDiv.innerHTML = '';
 
         docs.forEach(doc => {
-          const docCard = document.createElement('div');
-          docCard.className = 'bg-gray-50 p-4 rounded-lg shadow flex flex-col justify-between';
-          docCard.innerHTML = `
-            <h3 class="text-lg font-semibold text-gray-800 mb-2">${doc.name}</h3>
-            <p class="text-sm text-gray-600 mb-3">Category: ${doc.category}</p>
-            <a href="#" onclick="openExternalLink('${doc.link}')" class="text-indigo-600 hover:underline">
-              Open Document
-            </a>
+          const docTile = document.createElement('div');
+          docTile.className = 'tile doc-tile';
+          docTile.innerHTML = `
+            <div class="tile-icon">📄</div>
+            <div class="tile-title">${doc.name}</div>
+            <div class="tile-subtitle">${doc.category}</div>
+            <button class="tile-button" onclick="openExternalLink('${doc.link}')">Open Document</button>
           `;
-          docsListDiv.appendChild(docCard);
+          docsListDiv.appendChild(docTile);
         });
       }
 

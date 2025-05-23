@@ -2,9 +2,12 @@ const fs = require('fs');
 const path = require('path');
 const xlsx = require('xlsx');
 
+// Define resources folder path
+const resourcesPath = path.join(__dirname, 'resources');
+
 class DataReader {
     constructor(filePath, fileType) {
-        this.filePath = filePath;
+        this.filePath = path.join(resourcesPath, filePath);
         this.fileType = fileType;
         this.data = [];
         this.headers = [];
@@ -166,7 +169,21 @@ switch(pageName) {
     case 'documents.html':
         dataReader = new DataReader('ALL.Basis.Docs.xlsx', 'xlsx');
         break;
-    // Add other cases for different pages
+    case 'incidents.html':
+        dataReader = new DataReader('INM.csv', 'csv');
+        break;
+    case 'change-requests.html':
+        dataReader = new DataReader('CHM.csv', 'csv');
+        break;
+    case 'change-tasks.html':
+        dataReader = new DataReader('CHT.csv', 'csv');
+        break;
+    case 'service-requests.html':
+        dataReader = new DataReader('SRV.csv', 'csv');
+        break;
+    case 'problem-tickets.html':
+        dataReader = new DataReader('PRB.csv', 'csv');
+        break;
 }
 
 if (dataReader) {

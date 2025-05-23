@@ -16,8 +16,8 @@
       <input type="text" id="team-search" placeholder="Search team members..." onkeyup="filterTeamMembers()">
     </div>
 
-    <div id="team-members-list" class="team-grid">
-      <!-- Team members will be loaded here -->
+    <div class="tile-container">
+      <div id="team-members-list"></div>
     </div>
 
     <script>
@@ -56,20 +56,21 @@
         teamListDiv.innerHTML = '';
 
         members.forEach(member => {
-          const memberCard = document.createElement('div');
-          memberCard.className = 'team-card';
-          memberCard.innerHTML = `
-            <h3 class="member-name">${member.name}</h3>
-            <p class="member-role">${member.role}</p>
-            <div class="member-details">
+          const memberTile = document.createElement('div');
+          memberTile.className = 'tile member-tile';
+          memberTile.innerHTML = `
+            <div class="tile-icon">👤</div>
+            <div class="tile-title">${member.name}</div>
+            <div class="tile-subtitle">${member.role}</div>
+            <div class="tile-details">
               <p><strong>Email:</strong> <a href="mailto:${member.email}">${member.email}</a></p>
               <p><strong>AD ID:</strong> ${member.adId}</p>
               <p><strong>Linux ID:</strong> ${member.linuxId}</p>
               <p><strong>Contact:</strong> ${member.contact}</p>
-              <p><strong>Status:</strong> <span class="status-${member.availability.toLowerCase().replace(' ', '-')}">${member.availability}</span></p>
+              <p class="status-${member.availability.toLowerCase().replace(' ', '-')}">${member.availability}</p>
             </div>
           `;
-          teamListDiv.appendChild(memberCard);
+          teamListDiv.appendChild(memberTile);
         });
       }
 
