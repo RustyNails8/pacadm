@@ -1,19 +1,23 @@
 const { app, BrowserWindow } = require('electron')
 require('@electron/remote/main').initialize()
 
-function createWindow () {
-    const mainWindow = new BrowserWindow({
-        width: 1200,
-        height: 800,
-        webPreferences: {
-            nodeIntegration: true,
-            contextIsolation: false,
-            enableRemoteModule: true
-        }
-    })
+function createWindow() {
+  const mainWindow = new BrowserWindow({
+    width: 800,
+    height: 600,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+      enableRemoteModule: true
+    }
+  });
 
-    require('@electron/remote/main').enable(mainWindow.webContents)
-    mainWindow.loadFile('index.html')
+  // Add this line to maximize the window on startup
+  mainWindow.maximize();
+
+  mainWindow.loadFile('index.html');
+  
+  require('@electron/remote/main').enable(mainWindow.webContents)
 }
 
 app.whenReady().then(createWindow)
