@@ -1,6 +1,6 @@
 {
   "name": "pacadm",
-  "version": "3.2.0",
+  "version": "4.0.0",
   "description": "A minimal Electron application",
   "main": "main.js",
   "scripts": {
@@ -56,34 +56,8 @@
   },
   "config": {
     "forge": {
-      "packagerConfig": {
-        "extraResource": [
-          "resources/PACADM.csv",
-          "resources/version.json"
-        ]
-      },
-      "makers": [
-        {
-          "name": "@electron-forge/maker-squirrel",
-          "config": {
-            "name": "pacadm"
-          }
-        },
-        {
-          "name": "@electron-forge/maker-zip",
-          "platforms": [
-            "darwin"
-          ]
-        },
-        {
-          "name": "@electron-forge/maker-deb",
-          "config": {}
-        },
-        {
-          "name": "@electron-forge/maker-rpm",
-          "config": {}
-        }
-      ]
+      "makers": [],
+      "publishers": []
     }
   }
 }
